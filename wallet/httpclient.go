@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	qJson "github.com/Qitmeer/qitmeer/core/json"
 
@@ -141,6 +142,7 @@ func newHTTPClient(cfg *httpConfig) (*http.Client, error) {
 	// Create and return the new HTTP client potentially configured with a
 	// proxy and TLS.
 	c := http.Client{
+		Timeout: 5 * time.Second,
 		Transport: &http.Transport{
 			Dial:            dial,
 			TLSClientConfig: tlsConfig,
