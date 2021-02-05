@@ -249,7 +249,7 @@ func (cfg *httpConfig) sendPostRequest(marshalledJSON []byte) ([]byte, error) {
 	httpRequest.Header.Set("Content-Type", "application/json")
 	// Configure basic access authorization.
 	httpRequest.SetBasicAuth(cfg.RPCUser, cfg.RPCPassword)
-	cfg.httpClient.Timeout = 60 * time.Second
+	cfg.httpClient.Timeout = 300 * time.Second
 	httpResponse, err := cfg.httpClient.Do(httpRequest)
 	if err != nil {
 		return nil, fmt.Errorf("sendPostRequest: httpClient.Do err: %s", err)
