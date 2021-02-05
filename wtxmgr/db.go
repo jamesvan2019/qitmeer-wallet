@@ -154,6 +154,19 @@ func ReadAddrTxOutput(v []byte, txout *AddrTxOutput) (err error) {
 	txout.Amount = types.Amount(byteOrder.Uint64(v[36:44]))
 	copy(txout.Block.Hash[:], v[44:76])
 	txout.Block.Height = int32(byteOrder.Uint32(v[88:92]))
+	if len(v) < 100 || len(v) == 132 {
+		// wallet old data
+		txout.Spend = SpendStatus(byteOrder.Uint32(v[92:96]))
+		txout.Block.MainHeight = int32(byteOrder.Uint32(v[88:92])) // order
+		txout.Block.MainHeight -= 47100                            // order - mainHeight
+		if len(v) == 132 {
+			st := SpendTo{}
+			st.Index = byteOrder.Uint32(v[96:100])
+			copy(st.TxHash[:], v[100:132])
+			txout.SpendTo = &st
+		}
+		return nil
+	}
 	txout.Block.MainHeight = int32(byteOrder.Uint32(v[92:96]))
 	txout.Spend = SpendStatus(byteOrder.Uint32(v[96:100]))
 	if len(v) == 136 {
