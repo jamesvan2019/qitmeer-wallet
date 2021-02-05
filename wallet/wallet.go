@@ -1314,6 +1314,7 @@ func (w *Wallet) SendOutputs(outputs []*types.TxOutput, account int64, satPerKb 
 
 	var sendAddrTxOutput []wtxmgr.AddrTxOutput
 	//var prk string
+	fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "*****************check utxo start")
 b:
 	for _, aaar := range aaars {
 
@@ -1407,6 +1408,8 @@ b:
 			//}
 		}
 	}
+
+	fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "*****************check utxo end")
 	if payAmount.ToCoin() != types.Amount(0).ToCoin() || feeAmount != 0 {
 		log.Trace("payAmount", "payAmount", payAmount)
 		log.Trace("feeAmount", "feeAmount", feeAmount)
@@ -1418,6 +1421,7 @@ b:
 		return nil, err
 	}
 	log.Trace(fmt.Sprintf("signTx size:%v", len(signTx)), "signTx", signTx)
+	fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "*****************send tx start")
 	msg, err := w.HttpClient.SendRawTransaction(signTx, false)
 	if err != nil {
 		log.Trace("SendRawTransaction txSign err ", "err", err.Error())
@@ -1426,7 +1430,7 @@ b:
 		msg = strings.ReplaceAll(msg, "\"", "")
 		log.Trace("SendRawTransaction txSign response msg", "msg", msg)
 	}
-
+	fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "*****************write utxo start")
 	err = walletdb.Update(w.db, func(tx walletdb.ReadWriteTx) error {
 		ns := tx.ReadWriteBucket(wtxmgrNamespaceKey)
 		outns := ns.NestedReadWriteBucket(wtxmgr.BucketAddrtxout)
@@ -1441,6 +1445,7 @@ b:
 		log.Trace("UpdateAddrTxOut to spend succ ")
 		return nil
 	})
+	fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "*****************write utxo end")
 	if err != nil {
 		log.Error("UpdateAddrTxOut to spend err", "err", err.Error())
 		return nil, err
@@ -1510,8 +1515,9 @@ func (w *Wallet) multiAddressMergeSign(redeemTx types.Transaction, network strin
 //All errors are returned in btcjson.RPCError format
 func (w *Wallet) SendPairs(amounts map[string]types.Amount,
 	account int64, feeSatPerKb types.Amount) (string, error) {
+	fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "*****************check sync")
 	check, err := w.HttpClient.CheckSyncUpdate(int64(w.Manager.SyncedTo().Height))
-
+	fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "*****************check complete")
 	if check == false {
 		return "", err
 	}
@@ -1519,6 +1525,7 @@ func (w *Wallet) SendPairs(amounts map[string]types.Amount,
 	if err != nil {
 		return "", err
 	}
+	fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "*****************send")
 	tx, err := w.SendOutputs(outputs, account, feeSatPerKb)
 	if err != nil {
 		if err == txrules.ErrAmountNegative {
