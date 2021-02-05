@@ -142,7 +142,7 @@ func newHTTPClient(cfg *httpConfig) (*http.Client, error) {
 	// Create and return the new HTTP client potentially configured with a
 	// proxy and TLS.
 	c := http.Client{
-		Timeout: 5 * time.Second,
+		Timeout: 300 * time.Second,
 		Transport: &http.Transport{
 			Dial:            dial,
 			TLSClientConfig: tlsConfig,
@@ -247,10 +247,9 @@ func (cfg *httpConfig) sendPostRequest(marshalledJSON []byte) ([]byte, error) {
 	}
 	httpRequest.Close = true
 	httpRequest.Header.Set("Content-Type", "application/json")
-
 	// Configure basic access authorization.
 	httpRequest.SetBasicAuth(cfg.RPCUser, cfg.RPCPassword)
-
+	cfg.httpClient.Timeout = 60 * time.Second
 	httpResponse, err := cfg.httpClient.Do(httpRequest)
 	if err != nil {
 		return nil, fmt.Errorf("sendPostRequest: httpClient.Do err: %s", err)
