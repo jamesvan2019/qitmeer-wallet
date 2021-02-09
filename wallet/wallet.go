@@ -1314,7 +1314,7 @@ func (w *Wallet) SendOutputs(outputs []*types.TxOutput, account int64, satPerKb 
 
 	var sendAddrTxOutput []wtxmgr.AddrTxOutput
 	//var prk string
-	fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "*****************check utxo start")
+	fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "*****************check utxo start ", len(aaars), " utxos")
 b:
 	for _, aaar := range aaars {
 
@@ -1323,7 +1323,7 @@ b:
 		}
 
 		for _, addroutput := range aaar.AddrsOutput {
-			log.Trace(fmt.Sprintf("addr:%s,unspend:%v", addroutput.Addr, addroutput.balance.UnspendAmount))
+			log.Info(fmt.Sprintf("addr:%s,unspend:%v", addroutput.Addr, addroutput.balance.UnspendAmount))
 			if addroutput.balance.UnspendAmount > 0 {
 				addr, err := address.DecodeAddress(addroutput.Addr)
 				if err != nil {
@@ -1395,11 +1395,11 @@ b:
 								feeAmount = 0
 								break b
 							} else {
-								log.Trace("utxo < feeAmount")
+								log.Info("utxo < feeAmount")
 							}
 
 						} else {
-							log.Trace(fmt.Sprintf("system err payAmount :%v ,feeAmount :%v\n", payAmount, feeAmount))
+							log.Info(fmt.Sprintf("system err payAmount :%v ,feeAmount :%v\n", payAmount, feeAmount))
 							return nil, fmt.Errorf("system err payAmount :%v ,feeAmount :%v\n", payAmount, feeAmount)
 						}
 					}
